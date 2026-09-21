@@ -1,0 +1,16 @@
+# Logi
+*.log
+
+# Sekrety
+*.pem
+*.key
+.env
+
+# macOS
+.DS_Store
+
+# Foldery systemowe
+/tmp/
+
+# pozostale
+/notatki
