@@ -20,7 +20,8 @@ ENDPOINTS=(
     "https://httpbin.org/status/200"
     "https://google.com"
     "https://onet.pl"
-    "https://httpbin.org/status/503"   # celowo błędny — testujemy detekcję!
+    "https://github.com"              # ← DODAJ TO
+    "https://httpbin.org/status/503"
 )
 
 # ── Kolory w terminalu ────────────────────────────────────────────────────────
