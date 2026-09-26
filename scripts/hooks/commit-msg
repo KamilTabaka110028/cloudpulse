@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# .git/hooks/commit-msg — wymusza format Conventional Commits
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Regex: typ(opcjonalny-scope): opis
+PATTERN="^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?(!)?: .{1,100}$"
+
+# Ignoruj merge commity
+if echo "$COMMIT_MSG" | grep -qE "^Merge"; then
+    exit 0
+fi
+
+if ! echo "$COMMIT_MSG" | head -1 | grep -qE "$PATTERN"; then
+    echo "❌ Commit message nie spełnia formatu Conventional Commits!"
+    echo ""
+    echo "   Twój message: \"$COMMIT_MSG\""
+    echo ""
+    echo "   Wymagany format: <typ>(scope): opis"
+    echo "   Dozwolone typy:  feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
+    echo ""
+    echo "   Przykłady:"
+    echo "     feat: dodano monitoring github.com"
+    echo "     fix(health-check): poprawiono timeout"
+    echo "     docs: zaktualizowano README"
+    echo ""
+    exit 1   # ← Blokuje commit z złym formatem!
+fi
+
+echo "✅ Commit message OK: $COMMIT_MSG"
+exit 0

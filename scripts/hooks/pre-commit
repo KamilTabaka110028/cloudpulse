@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# .git/hooks/pre-commit — blokuje commity z sekretami
+
+echo "🔍 Sprawdzam czy nie commitujesz sekretów..."
+
+# Lista wzorców do szukania
+PATTERNS=(
+    "AKIA[0-9A-Z]{16}"             # AWS Access Key ID
+    "aws_secret_access_key"         # AWS Secret Key w config
+    "-----BEGIN.*PRIVATE KEY-----"  # Klucze prywatne SSH/PEM
+    "password\s*=\s*['\"]"          # Hardcoded passwords
+    "sk-[a-zA-Z0-9]{48}"           # OpenAI API Key
+    "ghp_[a-zA-Z0-9]{36}"          # GitHub Personal Access Token
+)
+
+FOUND=0
+for pattern in "${PATTERNS[@]}"; do
+    # Szukaj w plikach staged do commita (z pominięciem samych skryptów hooków)
+    result=$(git diff --cached --diff-filter=ACM -G "$pattern" --name-only -- ':!scripts/hooks/*' 2>/dev/null)
+    if [[ -n "$result" ]]; then
+        echo "❌ ZABLOKOWANO! Wzorzec sekretu znaleziony w:"
+        echo "   Pattern: $pattern"
+        echo "   Pliki: $result"
+        FOUND=1
+    fi
+done
+
+if [[ "$FOUND" -eq 1 ]]; then
+    echo ""
+    echo "⚠️  Usuń sekrety z kodu i spróbuj ponownie."
+    echo "   Użyj zmiennych środowiskowych zamiast hardcoded wartości!"
+    exit 1   # ← Blokuje commit!
+fi
+
+echo "✅ Brak sekretów — commit dozwolony."
+exit 0       # ← Pozwala na commit

@@ -1,0 +1,16 @@
+# Automatyczna normalizacja końców linii
+* text=auto
+
+# Skrypty bash — zawsze LF (krytyczne!)
+*.sh text eol=lf
+
+# Markdown i config — LF
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+
+# Pliki binarne
+*.png binary
+*.jpg binary
+*.pdf binary
